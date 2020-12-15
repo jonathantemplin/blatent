@@ -1,0 +1,24 @@
+Package: blatent
+Type: Package
+Title: Bayesian Latent Variable Models
+Version: 0.1.1
+Authors@R: person("Jonathan", "Templin", email = "jonathan-templin@uiowa.edu", role = c("aut", "cre"), comment=c(ORCID  = "0000-0001-7616-0973"))
+Maintainer: Jonathan Templin <jonathan-templin@uiowa.edu>
+Description: Estimation of latent variable models using Bayesian methods. Currently estimates the loglinear cognitive diagnosis model of Henson, Templin, and Willse (2009) <doi:10.1007/s11336-008-9089-5>.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Depends:
+    coda,
+    mnormt,
+    R (>= 3.0.0),
+    R6,
+    stats,
+    truncnorm
+RoxygenNote: 7.1.1
+LinkingTo: Rcpp, RcppArmadillo
+SystemRequirements: C++11
+Imports: 
+    Matrix,
+    Rcpp
+    

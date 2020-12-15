@@ -1,2 +1,2 @@
 # blatent
-Bayesian Latent variable model estimation package
+Bayesian Latent Variable Models in R
