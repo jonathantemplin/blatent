@@ -163,5 +163,19 @@ initializeSpecs = function(modelText,
     stop(paste0("options$missingMethod must be either 'omit' or 'imputeBayes'. Input given: ", options$missingMethod))
   }
 
+  # check if variables appear on LHS more than once
+  DVcounts = as.numeric(table(specs$allDVs))
+  if (max(DVcounts) >1){
+    stop(paste0("Variables can only appear as dependent variables in model statements once. Problem with ", names(table(specs$allDVs))[which(DVcounts>1)]))
+  }
+
+  # check if latents in Joint variables appear in model line
+  if (specs$nJointVariables > 1){
+
+    if (any(specs$latentVariables) %in% specs$allDVs){
+      stop(paste0("Joint latent variables cannot appear as dependent variables in model statements...yet. Problem with ", which(specs$latentVariables %in% specs$allDVs)))
+    }
+  }
+
   return(specs)
 }

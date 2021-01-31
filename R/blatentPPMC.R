@@ -70,7 +70,7 @@ blatentPPMC = function(model, nSamples, seed = model$options$seed, parallel = TR
   }
 
 
-  if (any(c("covariance", "bivariate", "pearson") %in% type)){
+  if (any(c("covariance", "bivariate", "pearson", "tetrachoric") %in% type)){
 
     # check list of pairwise variables with data for correlation
     obsCov = stats::cov(model$data[model$specs$observedVariables], use = "pairwise.complete.obs")
