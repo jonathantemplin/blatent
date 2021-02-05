@@ -337,8 +337,12 @@ blatentPPMC = function(model, nSamples, seed = model$options$seed, parallel = TR
 
     col = 1
     for (col in 1:ncol(x$samples)){
-      colECDF = stats::ecdf(x = x$samples[,col])
-      x$quantiles[col,2:9] = c(summary(colECDF), x$dataResults[1,col], colECDF(x$dataResults[1,col]))
+      if (!all(is.na(x$samples[,col]))){
+        colECDF = stats::ecdf(x = x$samples[,col])
+        x$quantiles[col,2:9] = c(summary(colECDF), x$dataResults[1,col], colECDF(x$dataResults[1,col]))
+      } else {
+        x$quantiles[col,2:9] = NA
+      }
     }
     return(x)
   })
