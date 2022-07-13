@@ -664,6 +664,7 @@ getCategoricalLatentEstimates = function(obs, profileMatrix){
   # temp = vapply(X = model$chain, FUN = function(x) return(x[,lvcols]), FUN.VALUE = cbind(as.numeric(1:dim(model$chain[[1]])[1]), as.numeric(1:dim(model$chain[[1]])[1])))
   temp = lapply(X = self$chain, FUN = function(x) return(x[,lvcols]))
   latentData = do.call("rbind", temp)
+  if (ncol(profileMatrix) == 1) latentData = matrix(c(t(latentData)), ncol=1)
 
   # get marginal means for attributes
   marginalMeans = apply(X = latentData, MARGIN = 2, FUN = mean)
@@ -679,7 +680,7 @@ getCategoricalLatentEstimates = function(obs, profileMatrix){
   # get EAP estimates of profile probabilities
   eapProfile = table(factor(latentData[,"clvProfile"], levels = 1:nProfiles))/nrow(latentData)
 
-  # browser()
+
   # build initial table with EAP estimates
   result = cbind(t(marginalMeans), t(eapProfile))
   colnames(result) = c(paste0(self$specs$latentVariables, ".EAP.marginal"),

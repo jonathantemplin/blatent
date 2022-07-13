@@ -9,6 +9,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // bernoulli_likelihood
 NumericVector bernoulli_likelihood(DataFrame data, arma::mat beta, RObject formula, String varName);
 RcppExport SEXP _blatent_bernoulli_likelihood(SEXP dataSEXP, SEXP betaSEXP, SEXP formulaSEXP, SEXP varNameSEXP) {
