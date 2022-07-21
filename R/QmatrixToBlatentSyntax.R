@@ -128,9 +128,11 @@ QmatrixToBlatentSyntax = function(Qmatrix, observedVariables = "rownames", laten
 
     blatentSyntax = paste0(blatentSyntax, "\n")
     blatentSyntax = paste0(blatentSyntax, "\n", latentVarNames[1], " ~ 1")
-    for (lvNum in 2:length(latentVariables)){
-      varFormula = paste(latentVarNames[lvNum], "~", paste0(latentVarNames[1:(lvNum-1)], collapse = "*"))
-      blatentSyntax = paste0(blatentSyntax, "\n", paste(latentVarNames[lvNum], "~", paste(attr(terms(formula(varFormula)), "term.labels"), collapse = " + ")))
+    if (length(latentVariables)>1){
+      for (lvNum in 2:length(latentVariables)){
+        varFormula = paste(latentVarNames[lvNum], "~", paste0(latentVarNames[1:(lvNum-1)], collapse = "*"))
+        blatentSyntax = paste0(blatentSyntax, "\n", paste(latentVarNames[lvNum], "~", paste(attr(terms(formula(varFormula)), "term.labels"), collapse = " + ")))
+      }
     }
 
     blatentSyntax = paste0(blatentSyntax, "\n\n# Latent variable specifications")
