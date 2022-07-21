@@ -125,6 +125,7 @@ blatentControl <-
            posteriorPredictiveChecks = setPosteriorPredictiveCheckOptions(),
            seed = NULL) {
 
+
     return(
       list(
         calculateDIC = calculateDIC,

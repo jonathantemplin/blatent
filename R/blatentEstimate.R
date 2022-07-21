@@ -51,6 +51,7 @@ blatentEstimate = function(dataMat, modelText, priorsList = NULL, options = blat
   }
 
   # prepare PPMC (if requested)
+
   if (options$posteriorPredictiveChecks$estimatePPMC){
     cat("\r Calculating Posteior Predictive Checks\n")
 
