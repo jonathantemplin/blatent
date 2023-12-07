@@ -1,3 +1,5 @@
+#define STRICT_R_HEADERS
+#include <float.h>
 #include <Rcpp.h>
 using namespace Rcpp;
 
