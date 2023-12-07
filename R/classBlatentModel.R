@@ -147,7 +147,7 @@ createParameterSummary = function(){
   # separate chain into distribution parameters and data parameters
   # convert chain into coda object mcmc.list
   nChains = length(self$chain)
-  if (class(self$chain) == "list"){
+  if (methods::is(self$chain, "list")){
 
     # grab only model parameters for model chain
     modelChain = lapply(X = self$chain, FUN = function(x) return(x[,self$specs$parameters$paramNames[which(self$specs$parameters$paramTypes == "model")]]))
@@ -361,6 +361,101 @@ latentEstimates = function(...){
   invisible(self)
 },
 
+plot = function(type = "nonconverged", PSRFcut = 1.1, ...){
+  if (type == "fit-heatmap"){
+
+    # first, check to see if PPMC has been conducted
+    if (!is.null(self$PPMC)){
+      # if so, next, check to see if PPMC types include either correlation, tetrachoric correlation, or covariance
+      if (any(c("correlation", "tetrachoric", "covariance") %in% names(self$PPMC))){
+
+        if ("tetrachoric" %in% names(self$PPMC)){
+
+          devNum = self$PPMC$tetrachoric$quantiles$Mean - self$PPMC$tetrachoric$quantiles$ObservedStatistic
+          temp = matrix(data = 0, nrow = self$specs$nObservedVariables, ncol = self$specs$nObservedVariables)
+          colnames(temp) = self$specs$observedVariables
+          rownames(temp) = self$specs$observedVariables
+          locData = strsplit(x = self$PPMC$tetrachoric$quantiles$Statistic, "_")
+
+          #devNum[which(devNum < .95 & devNum > .05)] = 0
+          for (i in 1:length(locData)){
+            temp[locData[[i]][1], locData[[i]][2]] = devNum[i]
+            temp[locData[[i]][2], locData[[i]][1]] = devNum[i]
+          }
+
+          heatmap(temp, col = rainbow(10, start  =0, end=1), main = "Tetrachoric Correlation Discrepancy")
+
+        }
+
+        if ("pearson" %in% names(self$PPMC)){
+          evNum = self$PPMC$pearson$quantiles$Mean - self$PPMC$pearson$quantiles$ObservedStatistic
+          temp = matrix(data = 0, nrow = self$specs$nObservedVariables, ncol = self$specs$nObservedVariables)
+          colnames(temp) = self$specs$observedVariables
+          rownames(temp) = self$specs$observedVariables
+          locData = strsplit(x = self$PPMC$pearson$quantiles$Statistic, "_")
+
+          #devNum[which(devNum < .95 & devNum > .05)] = 0
+          for (i in 1:length(locData)){
+            temp[locData[[i]][1], locData[[i]][2]] = devNum[i]
+            temp[locData[[i]][2], locData[[i]][1]] = devNum[i]
+          }
+
+          heatmap(temp, col = rainbow(10, start  =0, end=1), main = "Pearson Correlation Discrepancy")
+
+        }
+
+        if ("covariance" %in% names(self$PPMC)){
+          evNum = self$PPMC$covariance$quantiles$Mean - self$PPMC$covariance$quantiles$ObservedStatistic
+          temp = matrix(data = 0, nrow = self$specs$nObservedVariables, ncol = self$specs$nObservedVariables)
+          colnames(temp) = self$specs$observedVariables
+          rownames(temp) = self$specs$observedVariables
+          locData = strsplit(x = self$PPMC$covariance$quantiles$Statistic, "_")
+
+          #devNum[which(devNum < .95 & devNum > .05)] = 0
+          for (i in 1:length(locData)){
+            temp[locData[[i]][1], locData[[i]][2]] = devNum[i]
+            temp[locData[[i]][2], locData[[i]][1]] = devNum[i]
+          }
+
+          heatmap(temp, col = rainbow(10, start  =0, end=1), main = "Covariance Discrepancy")
+
+        }
+
+      } else {
+        stop(paste0("PPMC fit-heatmap can only be used with PPMC types correlation, tetrachoric, and covariance. Please use blatentPPMC() function and try again."))
+      }
+
+    } else {
+      stop(paste0("PPMC has not been run. Please use blatentPPMC() function and try again."))
+    }
+
+  } else if (type == "nonconverged"){
+
+    nNonConverged = length(which(self$parameterSummary[,"PSRF"] > PSRFcut))
+
+    if (nNonConverged == 0){
+
+      warning(paste0("No parameters with PSRF greater than cut level used (PSRFcut=", PSRFcut,")"))
+
+    } else {
+      par(mfrow = c(min(length(which(self$parameterSummary[,"PSRF"] > PSRFcut)), 4), 2))
+
+      for (var in 1:nNonConverged){
+
+        traceplot(mcmc.list(lapply(X = self$chain, FUN = function(x) return(mcmc(x[,names(which(self$parameterSummary[,"PSRF"] > PSRFcut))[var]])))),
+             main = paste0(names(which(self$parameterSummary[,"PSRF"] > PSRFcut))[var]))
+        densplot(mcmc.list(lapply(X = self$chain, FUN = function(x) return(mcmc(x[,names(which(self$parameterSummary[,"PSRF"] > PSRFcut))[var]])))),
+                 main = paste0("PSRF = ", round(self$parameterSummary[names(which(self$parameterSummary[,"PSRF"] > PSRFcut))[var],"PSRF"], digits = 3)))
+      }
+    }
+
+
+
+  } else {
+    stop(paste0("Plot type ", type, " not available"))
+  }
+},
+
 prepareData = function(...){
 
   for (variable in 1:length(self$variables)){
@@ -562,13 +657,14 @@ getCategoricalLatentEstimates = function(obs, profileMatrix){
 
 
   # first, check if chain has values for latent variables
-  lvcols = which(colnames(self$chain[[1]]) %in% paste0(obs, ".",self$specs$latentVariables))
+  lvcols = which(colnames(self$chain[[1]]) %in% paste0(rownames(self$specs$inputData)[obs], ".",self$specs$latentVariables))
 
   if (length(lvcols) == 0) return(NULL) # future exit
 
   # temp = vapply(X = model$chain, FUN = function(x) return(x[,lvcols]), FUN.VALUE = cbind(as.numeric(1:dim(model$chain[[1]])[1]), as.numeric(1:dim(model$chain[[1]])[1])))
   temp = lapply(X = self$chain, FUN = function(x) return(x[,lvcols]))
   latentData = do.call("rbind", temp)
+  if (ncol(profileMatrix) == 1) latentData = matrix(c(t(latentData)), ncol=1)
 
   # get marginal means for attributes
   marginalMeans = apply(X = latentData, MARGIN = 2, FUN = mean)
@@ -583,6 +679,7 @@ getCategoricalLatentEstimates = function(obs, profileMatrix){
 
   # get EAP estimates of profile probabilities
   eapProfile = table(factor(latentData[,"clvProfile"], levels = 1:nProfiles))/nrow(latentData)
+
 
   # build initial table with EAP estimates
   result = cbind(t(marginalMeans), t(eapProfile))
@@ -601,7 +698,7 @@ getCategoricalLatentEstimates = function(obs, profileMatrix){
 
   # convert to data frame in case obs is a character
   result = as.data.frame(result)
-  result = cbind(t(obs), result)
+  result = cbind(t(rownames(self$specs$inputData)[obs]), result)
   colnames(result)[1] = "observation"
 
   return(result)

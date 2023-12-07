@@ -1,7 +1,7 @@
 #' @import coda
 chainSummary = function(chain, HDPIntervalValue){
   nChains = length(chain)
-  if (class(chain) == "list"){
+  if (methods::is(chain, "list")){
 
 
     if (nChains > 1){

@@ -12,8 +12,12 @@ convertSyntaxToFormula = function(line.simple){
   }
 
   lhs = temp[1]
+
   #check variables for being part of index list
   if (length(grep(pattern = "-", x = lhs)) > 0) lhs = getVariableList(variableText = temp[1])
+
+  # check multiple variables on line
+  lhs = unlist(strsplit(x = lhs, split = "\\s+"))
 
   rhs = temp[2]
 

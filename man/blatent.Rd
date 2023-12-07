@@ -3,6 +3,7 @@
 \docType{package}
 \name{blatent}
 \alias{blatent}
+\alias{blatent-package}
 \title{blatent: A package for estimating Bayesian latent variable models.}
 \description{
 Estimation of latent variable models using Bayesian methods. Currently supports diagnostic classification models.

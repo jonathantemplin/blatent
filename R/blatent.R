@@ -5,6 +5,7 @@
 #'
 #' @docType package
 #' @name blatent
+#' @aliases blatent-package
 #' @useDynLib blatent
 #' @importFrom Rcpp sourceCpp
 NULL
