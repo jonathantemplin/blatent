@@ -15,10 +15,9 @@ Depends:
     R6,
     stats,
     truncnorm
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 LinkingTo: Rcpp, RcppArmadillo
-SystemRequirements: C++11
 Imports: 
     Matrix,
+    methods,
     Rcpp
-    

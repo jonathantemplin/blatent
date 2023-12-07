@@ -108,7 +108,7 @@ QmatrixToBlatentSyntax = function(Qmatrix, observedVariables = "rownames", laten
     # put into initial formula to get specific effects
 
     varFormula = paste(varName, "~", paste0(latentVarNames[which(Qmatrix[obsVar,latentVarNames] ==1)], collapse = "*"))
-    blatentSyntax = paste0(blatentSyntax, "\n", paste(varName, "~", paste(attr(terms(formula(varFormula)), "term.labels"), collapse = " + ")))
+    blatentSyntax = paste0(blatentSyntax, "\n", paste(varName, "~", paste(attr(stats::terms(stats::formula(varFormula)), "term.labels"), collapse = " + ")))
 
   }
 
@@ -131,7 +131,7 @@ QmatrixToBlatentSyntax = function(Qmatrix, observedVariables = "rownames", laten
     if (length(latentVariables)>1){
       for (lvNum in 2:length(latentVariables)){
         varFormula = paste(latentVarNames[lvNum], "~", paste0(latentVarNames[1:(lvNum-1)], collapse = "*"))
-        blatentSyntax = paste0(blatentSyntax, "\n", paste(latentVarNames[lvNum], "~", paste(attr(terms(formula(varFormula)), "term.labels"), collapse = " + ")))
+        blatentSyntax = paste0(blatentSyntax, "\n", paste(latentVarNames[lvNum], "~", paste(attr(stats::terms(stats::formula(varFormula)), "term.labels"), collapse = " + ")))
       }
     }
 

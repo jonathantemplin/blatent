@@ -147,7 +147,7 @@ createParameterSummary = function(){
   # separate chain into distribution parameters and data parameters
   # convert chain into coda object mcmc.list
   nChains = length(self$chain)
-  if (class(self$chain) == "list"){
+  if (methods::is(self$chain, "list")){
 
     # grab only model parameters for model chain
     modelChain = lapply(X = self$chain, FUN = function(x) return(x[,self$specs$parameters$paramNames[which(self$specs$parameters$paramTypes == "model")]]))
