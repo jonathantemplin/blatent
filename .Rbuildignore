@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.claude$
+^\.Rhistory$
+^\.DS_Store$
+^cran-comments\.md$
+^blatent\.Rcheck$
+^blatent_.*\.tar\.gz$
